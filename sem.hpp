@@ -1,6 +1,7 @@
 #ifndef SEM_HPP
 #define SEM_HPP
 #include <sys/types.h>
+
 union semun {
     int val;
     struct semid_ds *buf;
@@ -13,16 +14,14 @@ private:
     int id;
 public:
     Semaphore(key_t key);
-    ~Semaphore();
+    void deallocate();
     void initialize(short value);
     void wait();
-    void post();
-    bool check();
-    void change(short value);
+    void signal();
     int getVal();
 };
 
-void randomSleep();
+void randomSleep(int min, int max);
 
 
 #endif

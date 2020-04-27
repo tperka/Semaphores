@@ -3,7 +3,11 @@
 #include <iostream>
 #include<sys/sem.h>
 #include <ctime>
+#include <boost/random/mersenne_twister.hpp>
 using namespace std;
+
+
+static boost::random::mt19937 gen(time(0));
 
 Semaphore::Semaphore(key_t key)
 {
@@ -16,7 +20,7 @@ Semaphore::Semaphore(key_t key)
 }
 
 
-Semaphore::~Semaphore()
+void Semaphore::deallocate()
 {
     union semun ignored_arg;
     if(semctl(id, 1, IPC_RMID, ignored_arg) == -1)
@@ -48,33 +52,12 @@ void Semaphore::wait()
     }
 }
 
-void Semaphore::post()
+void Semaphore::signal()
 {
     struct sembuf arg = {0, 1, 0};
     if(semop(id, &arg, 1) == -1)
     {
-        cerr << "Error: failed to post on semaphore "<<id<<endl;
-        exit(1);
-    }
-}
-
-bool Semaphore::check()
-{
-    struct sembuf arg = {0, -1, IPC_NOWAIT};
-    if(semop(id, &arg, 1) == -1)
-        return false;
-    else
-        return true;
-}
-
-void Semaphore::change(short value)
-{
-    if(value == 0)
-        return;
-    struct sembuf arg = {0, value, 0};
-    if(semop(id, &arg, 1) == -1)
-    {
-        cerr << "Error: failed to change value of semaphore "<<id << endl;
+        cerr << "Error: failed to signal on semaphore "<<id<<endl;
         exit(1);
     }
 }
@@ -84,12 +67,7 @@ int Semaphore::getVal()
     return semctl(id, 0, GETVAL, 0);
 }
 
-
-
-void randomSleep()
+void randomSleep(int min, int max)
 {
-   srand(time(0));
-   struct timespec arg = {(time_t)0, (long)rand()%1000000000};
-   struct timespec res;
-   nanosleep(&arg, &res);
+    usleep(1000000*min + gen()%(1000000)*(max-min));
 }

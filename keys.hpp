@@ -13,5 +13,18 @@
 
 #define BUFFER_SIZE 9
 #define SHARED_BUFFER_ID 1000
-#define N 20
+
+
+#define CONSUMER_MIN_SLEEP 1
+#define CONSUMER_MAX_SLEEP 4
+
+#define PRODUCER_MIN_SLEEP 1
+#define PRODUCER_MAX_SLEEP 2
+
+#define READER_A_MIN_SLEEP 3
+#define READER_A_MAX_SLEEP 6
+
+#define READER_B_MIN_SLEEP 3
+#define READER_B_MAX_SLEEP 5
+
 #endif

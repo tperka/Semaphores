@@ -6,8 +6,10 @@
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
+#include <boost/random/mersenne_twister.hpp>
 using namespace std;
 
+static boost::random::mt19937 gen(time(0));
 
 int main(int argc, const char** argv) {
     // shared int buffer
@@ -29,23 +31,23 @@ int main(int argc, const char** argv) {
 
     //doing work
     srand(time(0));
-    for(int i = 0;i < N; ++i)
+    for(;;)
     {
         //check if queue is not full, otherwise wait
-        cout << "mutex: "<<mutex.getVal()<<" full: "<<full.getVal() << " empty: "<<empty.getVal() << " A_seen: "<<A_seen.getVal() << " B_seen: " << B_seen.getVal() << " read: "<<read.getVal()<<endl;
+        //cout << "mutex: "<<mutex.getVal()<<" full: "<<full.getVal() << " empty: "<<empty.getVal() << " A_seen: "<<A_seen.getVal() << " B_seen: " << B_seen.getVal() << " read: "<<read.getVal()<<endl;
         empty.wait();
         //it is not full, wait for the access
-        int temp = rand() % 100;
+        int temp = gen() % 100;
         mutex.wait();
         //access possible, produce random item
         push_back(buffer, temp);
         cout<<"Producer added item: " << temp << endl;
         showQueue(buffer);
         //leave critical section
-        mutex.post();   
-        full.post();    //increase the amount of items
+        mutex.signal();   
+        full.signal();    //increase the amount of items
         //sleep for a random ammount of time (up to 1 sec)
-        randomSleep();
+        randomSleep(PRODUCER_MIN_SLEEP, PRODUCER_MAX_SLEEP);
     }    
 
     //detach

@@ -4,11 +4,21 @@
 #include "sem.hpp"
 #include "keys.hpp"
 #include <wait.h>
+#include <signal.h>
 using namespace std;
+
+void handleCtrlC(int)
+{
+    system("ipcrm -a");
+    cout << "Everything was cleared, exiting program..." << endl;
+    exit(EXIT_SUCCESS);
+}
 
 
 int main(int argc, char const *argv[])
 {
+    //signal handler to handle Ctrl-C
+    signal(SIGINT, handleCtrlC);
     // shared int buffer
     int* buffer;
     //creation of buffer and its semaphores
@@ -33,7 +43,7 @@ int main(int argc, char const *argv[])
     A_seen.initialize(1);
     B_seen.initialize(1);
     read.initialize(0);
-    //start processes:
+    //start processes: 
     pid_t child = fork();
      
     if(child == 0)
@@ -61,5 +71,6 @@ int main(int argc, char const *argv[])
     }
    
     wait(NULL);
+
     return 0;
 }

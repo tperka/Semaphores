@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstdlib>
 
+
 void push_back(int* queue, int value)
 {
     queue[queue[0] + 1] = value;

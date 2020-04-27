@@ -7,7 +7,10 @@
 
 using namespace std;
 
+
+
 int main(int argc, const char** argv) {
+
     // shared int buffer
     int* buffer;
     //connecting to the buffer
@@ -25,26 +28,29 @@ int main(int argc, const char** argv) {
     Semaphore B_seen(B_SEEN_SEMKEY);
     Semaphore read(READ_SEMKEY);
     //connection established
-
-    for(int i = 0;i < N; ++i)
+    int taken = 0;
+    for(;;)
     {
         //is item already read?
+        //cout << "konsument czeka na nieprzeczytany item" << endl;
         read.wait();
         //check if buffer is not empty
+        //cout << "konsument czeka niepustą kolejkę" << endl;
         full.wait();
         //not empty, wait for access
+        //cout << "konsument czeka na dostęp" << endl;
         mutex.wait();
         //access granted, remove item
-        pop_front(buffer);
-        cout << "Consumer took out item: " << buffer[1] << endl;
+        taken = pop_front(buffer);
+        cout << "Consumer took out item: " << taken << endl;
         showQueue(buffer); 
         //new element, reset readers' semaphores       
         read.initialize(0);
         A_seen.initialize(1);
         B_seen.initialize(1);
-        mutex.post();
-        empty.post();
-        randomSleep();
+        mutex.signal();
+        empty.signal();
+        randomSleep(CONSUMER_MIN_SLEEP, CONSUMER_MAX_SLEEP);
     }
     shmdt(buffer);
     return 0;
