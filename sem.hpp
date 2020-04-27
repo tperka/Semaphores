@@ -14,8 +14,7 @@ private:
     int id;
 public:
     Semaphore(key_t key);
-    void deallocate();
-    void initialize(short value);
+    void setVal(short value);
     void wait();
     void signal();
     int getVal();

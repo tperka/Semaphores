@@ -14,7 +14,7 @@ int main(int argc, char const *argv[])
     if(buffer_id == -1)
     {
         cerr<<"Error: shmget failed"<<endl;
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     buffer = (int*) shmat(buffer_id, 0, 0);
     Semaphore mutex(MUTEX_SEMKEY);
@@ -41,7 +41,7 @@ int main(int argc, char const *argv[])
         ////cout << "czytelnik B czeka na dostęp do sekcji"<<endl;
         mutex.wait();
         //access granted, set read
-        //cout << "czytelnik B doczekał się, oz"<<endl;
+        //cout << "czytelnik B doczekał się, czyta"<<endl;
         read.signal();
         cout << "B has read an item: " << buffer[1] << endl;
         mutex.signal();

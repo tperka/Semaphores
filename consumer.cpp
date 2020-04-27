@@ -2,7 +2,6 @@
 #include "sem.hpp"
 #include "queue.hpp"
 
-#include <iostream>
 #include <sys/shm.h>
 
 using namespace std;
@@ -18,7 +17,7 @@ int main(int argc, const char** argv) {
     if(buffer_id == -1)
     {
         cerr<<"Error: shmget failed"<<endl;
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     buffer = (int*) shmat(buffer_id, 0, 0);
     Semaphore mutex(MUTEX_SEMKEY);
@@ -32,7 +31,7 @@ int main(int argc, const char** argv) {
     for(;;)
     {
         //is item already read?
-        //cout << "konsument czeka na nieprzeczytany item" << endl;
+        //cout << "konsument czeka na przeczytany item" << endl;
         read.wait();
         //check if buffer is not empty
         //cout << "konsument czeka niepustą kolejkę" << endl;
@@ -45,9 +44,9 @@ int main(int argc, const char** argv) {
         cout << "Consumer took out item: " << taken << endl;
         showQueue(buffer); 
         //new element, reset readers' semaphores       
-        read.initialize(0);
-        A_seen.initialize(1);
-        B_seen.initialize(1);
+        read.setVal(0);
+        A_seen.setVal(1);
+        B_seen.setVal(1);
         mutex.signal();
         empty.signal();
         randomSleep(CONSUMER_MIN_SLEEP, CONSUMER_MAX_SLEEP);

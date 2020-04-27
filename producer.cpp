@@ -3,9 +3,6 @@
 #include "queue.hpp"
 
 #include <sys/shm.h>
-#include <iostream>
-#include <cstdlib>
-#include <ctime>
 #include <boost/random/mersenne_twister.hpp>
 using namespace std;
 
@@ -19,7 +16,7 @@ int main(int argc, const char** argv) {
     if(buffer_id == -1)
     {
         cerr<<"Error: shmget failed"<<endl;
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     buffer = (int*) shmat(buffer_id, 0, 0);
     Semaphore mutex(MUTEX_SEMKEY);
@@ -34,7 +31,6 @@ int main(int argc, const char** argv) {
     for(;;)
     {
         //check if queue is not full, otherwise wait
-        //cout << "mutex: "<<mutex.getVal()<<" full: "<<full.getVal() << " empty: "<<empty.getVal() << " A_seen: "<<A_seen.getVal() << " B_seen: " << B_seen.getVal() << " read: "<<read.getVal()<<endl;
         empty.wait();
         //it is not full, wait for the access
         int temp = gen() % 100;

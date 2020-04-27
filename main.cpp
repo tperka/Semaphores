@@ -1,16 +1,18 @@
 #include <iostream>
 #include <unistd.h>
 #include <sys/shm.h>
-#include "sem.hpp"
-#include "keys.hpp"
 #include <wait.h>
 #include <signal.h>
+
+#include "sem.hpp"
+#include "keys.hpp"
+
 using namespace std;
 
 void handleCtrlC(int)
 {
     system("ipcrm -a");
-    cout << "Everything was cleared, exiting program..." << endl;
+    cout << endl<<"Everything has been cleared, exiting program..." << endl;
     exit(EXIT_SUCCESS);
 }
 
@@ -37,12 +39,12 @@ int main(int argc, char const *argv[])
     Semaphore B_seen(B_SEEN_SEMKEY);
     Semaphore read(READ_SEMKEY);
     //initializing semaphores
-    mutex.initialize(1);
-    full.initialize(0);
-    empty.initialize(BUFFER_SIZE);
-    A_seen.initialize(1);
-    B_seen.initialize(1);
-    read.initialize(0);
+    mutex.setVal(1);
+    full.setVal(0);
+    empty.setVal(BUFFER_SIZE);
+    A_seen.setVal(1);
+    B_seen.setVal(1);
+    read.setVal(0);
     //start processes: 
     pid_t child = fork();
      

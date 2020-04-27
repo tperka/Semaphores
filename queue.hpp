@@ -1,7 +1,6 @@
 #ifndef QUEUE_HPP
 #define QUEUE_HPP
 #include <iostream>
-#include <cstdlib>
 
 
 void push_back(int* queue, int value)
@@ -20,10 +19,7 @@ int pop_front(int *queue)
     --queue[0];
     return toReturn;
 }
-int getSize(int * queue)
-{
-    return queue[0];
-}
+
 void showQueue(int* queue)
 {
     std::cout << "Queue: ";

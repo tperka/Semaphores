@@ -1,8 +1,6 @@
 #ifndef KEYS_H
 #define KEYS_H
 
-
-
 #define EMPTY_SEMKEY 99
 #define FULL_SEMKEY 100
 #define READ_SEMKEY 101

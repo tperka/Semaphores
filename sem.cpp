@@ -1,8 +1,7 @@
 #include "sem.hpp"
 #include "keys.hpp"
 #include <iostream>
-#include<sys/sem.h>
-#include <ctime>
+#include <sys/sem.h>
 #include <boost/random/mersenne_twister.hpp>
 using namespace std;
 
@@ -15,21 +14,11 @@ Semaphore::Semaphore(key_t key)
     if(id == -1)
     {
         cerr << "Error: failed to allocate semaphore "<< key <<endl;
-        exit(1);
+        exit(EXIT_FAILURE);
     } 
 }
 
-
-void Semaphore::deallocate()
-{
-    union semun ignored_arg;
-    if(semctl(id, 1, IPC_RMID, ignored_arg) == -1)
-    {
-        cerr << "Error: failed to deallocate semaphore "<< id <<endl;
-        exit(1);
-    }
-}
-void Semaphore::initialize(short value)
+void Semaphore::setVal(short value)
 {
     union semun arg;
     unsigned short vals[1];
@@ -38,7 +27,7 @@ void Semaphore::initialize(short value)
     if(semctl(id,0,SETALL,arg) == -1)
     {
             cerr << "Error: failed to initialize semaphore "<<id<<endl;
-            exit(1);
+            exit(EXIT_FAILURE);
     }
 }
 
@@ -48,7 +37,7 @@ void Semaphore::wait()
     if(semop(id, &arg, 1) == -1)
     {
         cerr << "Error: failed to wait on semaphore "<<id<<endl;
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -58,7 +47,7 @@ void Semaphore::signal()
     if(semop(id, &arg, 1) == -1)
     {
         cerr << "Error: failed to signal on semaphore "<<id<<endl;
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 }
 
